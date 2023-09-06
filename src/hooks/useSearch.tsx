@@ -1,7 +1,3 @@
-/*
-useSearch = (keyword:string) => {} 
-*/
-
 import { useEffect, useState } from 'react';
 
 import CacheApiServer from '../api/CacheApiServer';
@@ -17,7 +13,6 @@ const useSearch = (keyword: string) => {
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     setIsLoading(true);
-    //setFocuedResult(0);
     setRecommendedKeywords([]);
 
     if (!isEmptyString(keyword)) {
