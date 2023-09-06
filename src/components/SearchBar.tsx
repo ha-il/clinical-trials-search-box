@@ -21,7 +21,10 @@ function SearchBar({
 }: Props) {
   const handleFocusInput = () => setIsSearchBarFocused(true);
   const handleBlurInput = () => setIsSearchBarFocused(false);
-  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value);
+  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFocuedResult(0);
+    setKeyword(e.target.value);
+  };
   const handleKeyDownKeywordsList = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown' && focusedResult < 6) setFocuedResult(prev => prev + 1);
     if (e.key === 'ArrowUp' && focusedResult > 0) setFocuedResult(prev => prev - 1);
