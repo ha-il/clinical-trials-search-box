@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { styled } from 'styled-components';
 
+import CacheApiServer from './api/CacheApiServer';
+
 const DEFAULT_RECOMENDED_KEYWORDS = ['B형 간염', '비만', '관절염', '우울증', '식도염'];
 interface Sick {
   sickCd: string;
@@ -22,9 +24,7 @@ function App() {
 
   useEffect(() => {
     const getRecomendedKeywords = async () => {
-      const res = await fetch(`http://localhost:4000/sick?q=${keyword}`);
-      const data = await res.json();
-      console.info('calling api');
+      const data = await CacheApiServer.getRecommendedKeword(keyword);
       setRecommendedKeywords(data);
     };
 
