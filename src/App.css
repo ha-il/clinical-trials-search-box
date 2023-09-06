@@ -3,7 +3,8 @@
   flex-direction: column;
   align-items: center;
   background-color: #cbe9ff;
-  padding: 4rem 0;
+  position: relative;
+  padding: 100px 0 150px 0;
 }
 
 h1 {
