@@ -14,22 +14,33 @@ interface Sick {
 const isEmptyString = (keyword: string) => keyword === '';
 
 function App() {
-  const [isSearchBarFocused, setIsSearchBarFocused] = useState(false);
   const [keyword, setKeyword] = useState('');
   const [recommendedKeywords, setRecommendedKeywords] = useState<Sick[]>([]);
+  const [isSearchBarFocused, setIsSearchBarFocused] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFocusInput = () => setIsSearchBarFocused(true);
   const handleBlurInput = () => setIsSearchBarFocused(false);
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value);
 
   useEffect(() => {
-    const getRecomendedKeywords = async () => {
-      const data = await CacheApiServer.getRecommendedKeword(keyword);
-      setRecommendedKeywords(data);
-    };
+    setIsLoading(true);
+    setRecommendedKeywords([]);
 
-    if (keyword !== '') getRecomendedKeywords();
-    if (isEmptyString(keyword)) setRecommendedKeywords([]);
+    if (!isEmptyString(keyword)) {
+      const timer = setTimeout(() => {
+        const getRecomendedKeywords = async () => {
+          const data = await CacheApiServer.getRecommendedKeword(keyword);
+          setRecommendedKeywords(data);
+        };
+        getRecomendedKeywords();
+        setIsLoading(false);
+      }, 500);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+    setIsLoading(false);
   }, [keyword]);
 
   return (
@@ -54,7 +65,7 @@ function App() {
           onFocus={handleFocusInput}
           onBlur={handleBlurInput}
           onChange={handleChangeInput}
-          value={keyword}
+          //value={keyword}
         />
         <button type='button'>
           <ScopeIcon>
@@ -84,29 +95,34 @@ function App() {
               <div>{keyword}</div>
             </CurrentKeyword>
           )}
+
           <CurrentKeywordsArea>
             <div>{isEmptyString(keyword) ? '최근 검색어' : '추천 검색어'}</div>
-            {isEmptyString(keyword) && <div>최근 검색어가 없습니다.</div>}
+
+            {isEmptyString(keyword) && !isLoading && <div>최근 검색어가 없습니다.</div>}
             <CurrentRecommendedKeywords>
-              {recommendedKeywords.length === 0 && keyword.length !== 0 && (
+              {isLoading && <div>로딩 중...</div>}
+              {!isLoading && recommendedKeywords.length === 0 && keyword.length !== 0 && (
                 <div>관련 검색어 없음</div>
               )}
-              {recommendedKeywords.slice(0, 7).map(keyword => (
-                <CurrentRecommendedKeyword key={keyword.sickCd}>
-                  <svg
-                    viewBox='0 0 16 16'
-                    fill='currentColor'
-                    preserveAspectRatio='none'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path d='M6.56 0a6.56 6.56 0 015.255 10.49L16 14.674 14.675 16l-4.186-4.184A6.56 6.56 0 116.561 0zm0 1.875a4.686 4.686 0 100 9.372 4.686 4.686 0 000-9.372z'></path>
-                  </svg>
+              {!isLoading &&
+                recommendedKeywords.slice(0, 7).map(keyword => (
+                  <CurrentRecommendedKeyword key={keyword.sickCd}>
+                    <svg
+                      viewBox='0 0 16 16'
+                      fill='currentColor'
+                      preserveAspectRatio='none'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path d='M6.56 0a6.56 6.56 0 015.255 10.49L16 14.674 14.675 16l-4.186-4.184A6.56 6.56 0 116.561 0zm0 1.875a4.686 4.686 0 100 9.372 4.686 4.686 0 000-9.372z'></path>
+                    </svg>
 
-                  <div>{keyword.sickNm}</div>
-                </CurrentRecommendedKeyword>
-              ))}
+                    <div>{keyword.sickNm}</div>
+                  </CurrentRecommendedKeyword>
+                ))}
             </CurrentRecommendedKeywords>
           </CurrentKeywordsArea>
+
           {isEmptyString(keyword) && (
             <RecomendedKeywordsArea>
               <div>추천 검색어로 검색해보세요.</div>
