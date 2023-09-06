@@ -17,14 +17,21 @@ function App() {
   const [keyword, setKeyword] = useState('');
   const [recommendedKeywords, setRecommendedKeywords] = useState<Sick[]>([]);
   const [isSearchBarFocused, setIsSearchBarFocused] = useState(false);
+  const [focusedResult, setFocuedResult] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFocusInput = () => setIsSearchBarFocused(true);
   const handleBlurInput = () => setIsSearchBarFocused(false);
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value);
 
+  const handleKeyDownKeywordsList = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown' && focusedResult < 6) setFocuedResult(prev => prev + 1);
+    if (e.key === 'ArrowUp' && focusedResult > 0) setFocuedResult(prev => prev - 1);
+  };
+
   useEffect(() => {
     setIsLoading(true);
+    setFocuedResult(0);
     setRecommendedKeywords([]);
 
     if (!isEmptyString(keyword)) {
@@ -65,6 +72,7 @@ function App() {
           onFocus={handleFocusInput}
           onBlur={handleBlurInput}
           onChange={handleChangeInput}
+          onKeyDown={handleKeyDownKeywordsList}
           //value={keyword}
         />
         <button type='button'>
@@ -106,20 +114,38 @@ function App() {
                 <div>관련 검색어 없음</div>
               )}
               {!isLoading &&
-                recommendedKeywords.slice(0, 7).map(keyword => (
-                  <CurrentRecommendedKeyword key={keyword.sickCd}>
-                    <svg
-                      viewBox='0 0 16 16'
-                      fill='currentColor'
-                      preserveAspectRatio='none'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path d='M6.56 0a6.56 6.56 0 015.255 10.49L16 14.674 14.675 16l-4.186-4.184A6.56 6.56 0 116.561 0zm0 1.875a4.686 4.686 0 100 9.372 4.686 4.686 0 000-9.372z'></path>
-                    </svg>
+                recommendedKeywords.slice(0, 7).map((keyword, idx) => {
+                  if (idx === focusedResult) {
+                    return (
+                      <FocusedRecommendedKeyword key={keyword.sickCd}>
+                        <svg
+                          viewBox='0 0 16 16'
+                          fill='currentColor'
+                          preserveAspectRatio='none'
+                          xmlns='http://www.w3.org/2000/svg'
+                        >
+                          <path d='M6.56 0a6.56 6.56 0 015.255 10.49L16 14.674 14.675 16l-4.186-4.184A6.56 6.56 0 116.561 0zm0 1.875a4.686 4.686 0 100 9.372 4.686 4.686 0 000-9.372z'></path>
+                        </svg>
 
-                    <div>{keyword.sickNm}</div>
-                  </CurrentRecommendedKeyword>
-                ))}
+                        <div>{keyword.sickNm}</div>
+                      </FocusedRecommendedKeyword>
+                    );
+                  }
+                  return (
+                    <CurrentRecommendedKeyword key={keyword.sickCd}>
+                      <svg
+                        viewBox='0 0 16 16'
+                        fill='currentColor'
+                        preserveAspectRatio='none'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path d='M6.56 0a6.56 6.56 0 015.255 10.49L16 14.674 14.675 16l-4.186-4.184A6.56 6.56 0 116.561 0zm0 1.875a4.686 4.686 0 100 9.372 4.686 4.686 0 000-9.372z'></path>
+                      </svg>
+
+                      <div>{keyword.sickNm}</div>
+                    </CurrentRecommendedKeyword>
+                  );
+                })}
             </CurrentRecommendedKeywords>
           </CurrentKeywordsArea>
 
@@ -239,6 +265,18 @@ const CurrentRecommendedKeyword = styled.li`
   display: flex;
   align-items: center;
   padding: 0.5rem 0;
+  & svg {
+    color: rgba(0, 0, 0, 0.2);
+    width: 21px;
+    height: 21px;
+    padding: 0 6px;
+  }
+`;
+const FocusedRecommendedKeyword = styled.li`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  background-color: #eef8ff;
   & svg {
     color: rgba(0, 0, 0, 0.2);
     width: 21px;
