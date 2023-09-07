@@ -4,7 +4,7 @@ import './App.css';
 import { styled } from 'styled-components';
 
 import SearchBar from './components/SearchBar';
-import SerachWindow from './components/SerachWindow';
+import SearchWindow from './components/SearchWindow';
 
 function App() {
   const [keyword, setKeyword] = useState('');
@@ -23,7 +23,7 @@ function App() {
         setFocuedResult={setFocuedResult}
         setKeyword={setKeyword}
       />
-      {isSearchBarFocused && <SerachWindow keyword={keyword} focusedResult={focusedResult} />}
+      {isSearchBarFocused && <SearchWindow keyword={keyword} focusedResult={focusedResult} />}
     </div>
   );
 }

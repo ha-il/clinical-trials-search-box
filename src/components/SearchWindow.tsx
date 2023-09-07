@@ -11,18 +11,18 @@ export interface Props {
   focusedResult: number;
 }
 
-function SerachWindow({ keyword, focusedResult }: Props) {
+function SearchWindow({ keyword, focusedResult }: Props) {
   return (
-    <SerachWindowWrapper>
+    <SearchWindowWrapper>
       {!isEmptyString(keyword) && <CurrentKeyword keyword={keyword} />}
       <CurrentKeywordsArea keyword={keyword} focusedResult={focusedResult} />
       {isEmptyString(keyword) && <RecomendedKeywordsArea />}
-    </SerachWindowWrapper>
+    </SearchWindowWrapper>
   );
 }
-export default SerachWindow;
+export default SearchWindow;
 
-const SerachWindowWrapper = styled.div`
+const SearchWindowWrapper = styled.div`
   background-color: white;
   padding: 20px 0;
   border-radius: 21px;

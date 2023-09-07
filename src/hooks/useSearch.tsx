@@ -23,7 +23,7 @@ const useSearch = (keyword: string) => {
         };
         getRecomendedKeywords();
         setIsLoading(false);
-      }, 500);
+      }, 300);
       return () => {
         clearTimeout(timer);
       };

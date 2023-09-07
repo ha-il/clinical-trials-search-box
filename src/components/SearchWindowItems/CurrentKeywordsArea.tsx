@@ -4,7 +4,7 @@ import useSearch from '../../hooks/useSearch';
 import { isEmptyString } from '../../utils/isEmptyString';
 import CurrentRecommendedKeyword from '../CurrentKeywordsAreaItema/CurrentRecommendedKeyword';
 import FocusedRecommendedKeyword from '../CurrentKeywordsAreaItema/FocusedRecommendedKeyword';
-import { Props } from '../SerachWindow';
+import { Props } from '../SearchWindow';
 
 function CurrentKeywordsArea({ keyword, focusedResult }: Props) {
   const { recommendedKeywords, isLoading } = useSearch(keyword);
@@ -16,16 +16,18 @@ function CurrentKeywordsArea({ keyword, focusedResult }: Props) {
   return (
     <CurrentKeywordsAreaWrapper>
       <AreaTitle>{isEmptyString(keyword) ? '최근 검색어' : '추천 검색어'}</AreaTitle>
-      {isEmptyString(keyword) && !isLoading && <div>최근 검색어가 없습니다.</div>}
+      {isEmptyString(keyword) && <div>최근 검색어가 없습니다.</div>}
       <CurrentRecommendedKeywords>
-        {isLoading && <div>로딩 중...</div>}
-        {isResultNotFound && <div>관련 검색어 없음</div>}
-        {!isLoading &&
+        {isLoading ? (
+          <div>로딩 중...</div>
+        ) : (
           shownRecommendedKeywords.map((recommendedKeyword, idx) => {
             if (idx === focusedResult)
               return <FocusedRecommendedKeyword recommendedKeyword={recommendedKeyword} />;
             return <CurrentRecommendedKeyword recommendedKeyword={recommendedKeyword} />;
-          })}
+          })
+        )}
+        {isResultNotFound && <div>관련 검색어 없음</div>}
       </CurrentRecommendedKeywords>
     </CurrentKeywordsAreaWrapper>
   );

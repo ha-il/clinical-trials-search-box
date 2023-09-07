@@ -2,12 +2,10 @@ const BASE_URL = 'http://localhost:4000/sick';
 const HEADER_FETCH_DATE = 'fetch-date';
 const ONE_DAY_MILISECOND = 1000 * 60 * 60 * 24;
 
-const CACHE_STORAGE = {
-  GIS: 'Clinic-trials-search',
-};
+const CACHE_STORAGE = 'Clinic-trials-search';
 
 export default class CacheApiServer {
-  private static giCacheStorage = CACHE_STORAGE.GIS;
+  private static giCacheStorage = CACHE_STORAGE;
 
   static async getRecommendedKeword(keyword: string) {
     const url = `${BASE_URL}?q=${keyword}`; // 쿼리 url 생성
