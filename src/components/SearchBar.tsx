@@ -2,9 +2,13 @@ import React from 'react';
 
 import { styled } from 'styled-components';
 
+import { Sick } from '../hooks/useSearch';
+
 import ScopeIcon from './common/ScopeIcon';
 
-interface Props {
+export interface InputHandlerProps {
+  recommendedKeywords: Sick[];
+  keyword: string;
   isSearchBarFocused: boolean;
   focusedResult: number;
   setIsSearchBarFocused: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,12 +17,14 @@ interface Props {
 }
 
 function SearchBar({
+  recommendedKeywords,
+  keyword,
   focusedResult,
   isSearchBarFocused,
   setIsSearchBarFocused,
   setKeyword,
   setFocuedResult,
-}: Props) {
+}: InputHandlerProps) {
   const handleFocusInput = () => setIsSearchBarFocused(true);
   const handleBlurInput = () => setIsSearchBarFocused(false);
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,8 +32,11 @@ function SearchBar({
     setKeyword(e.target.value);
   };
   const handleKeyDownKeywordsList = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowDown' && focusedResult < 6) setFocuedResult(prev => prev + 1);
+    if (e.nativeEvent.isComposing) return;
+    if (e.key === 'ArrowDown' && focusedResult < recommendedKeywords.length - 1)
+      setFocuedResult(prev => prev + 1);
     if (e.key === 'ArrowUp' && focusedResult > 0) setFocuedResult(prev => prev - 1);
+    if (e.key === 'Escape') e.currentTarget.blur();
   };
 
   return (
@@ -35,11 +44,12 @@ function SearchBar({
       <ScopeIcon />
       <SearchBarInput
         type='text'
-        placeholder='질환명을 입력해 주세요.'
+        placeholder={isSearchBarFocused ? '' : '질환명을 입력해 주세요.'}
         onFocus={handleFocusInput}
         onBlur={handleBlurInput}
         onChange={handleChangeInput}
         onKeyDown={handleKeyDownKeywordsList}
+        value={keyword}
       />
       <SearchBarButton type='button'>
         <ScopeIcon />
